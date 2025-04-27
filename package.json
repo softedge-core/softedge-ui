@@ -1,6 +1,6 @@
 {
   "name": "@softedge-core/softedge-ui",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -22,8 +22,10 @@
     "@radix-ui/react-dropdown-menu": "^2.1.5",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-popover": "^1.1.11",
+    "@radix-ui/react-scroll-area": "^1.2.6",
     "@radix-ui/react-slot": "^1.2.0",
     "@radix-ui/react-switch": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "heroicons": "^2.2.0",
     "lucide-react": "^0.503.0",

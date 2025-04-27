@@ -1,11 +1,13 @@
 import React, { useState, isValidElement, cloneElement } from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "../../ui/popover";
-import { Button } from "../../ui/button";
+import { Popover, PopoverTrigger, PopoverContent } from "../../../ui/popover";
+import { Button } from "../../../ui/button";
 import { ChevronDown } from "lucide-react";
-import { Label } from "../../ui/label";
+import { Label } from "../../../ui/label";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { MultiOptionList } from "./SEPopoverMultipleOption";
 import { SingleOptionList } from "./SEPopoverSingleOption";
+import { cn } from "../../../lib/utils";
+import { ScrollArea } from "../../../ui/scroll-area";
 
 type CFPopoverFilterProps = {
   icon: React.ReactNode;
@@ -67,14 +69,6 @@ export const CFPopoverFilter = ({
   const formatLabel = (label: string) =>
     label.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (str) => str.toUpperCase());
 
-  // const clonedIcon = isValidElement(icon)
-  //   ? cloneElement(icon, {
-  //       className: `${
-  //         icon.props.className ?? ""
-  //       } ${totalSelected > 0 ? "text-sky-600 font-semibold" : "text-gray-500"}`,
-  //     })
-  //   : icon;
-
   return (
     <div className="flex flex-col">
       <div className="relative">
@@ -82,44 +76,38 @@ export const CFPopoverFilter = ({
         {formatLabel(label)}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
-        <div className="relative rounded-md bg-white shadow-sm gap-2">
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="xs"
-              className={`z-0 flex items-center rounded-md relative ${
-                totalSelected > 0
-                  ? "border bg-sky-50 border-sky-600 font-semibold pr-8"
-                  : "text-gray-600 bg-white gap-2"
-              }`}
-            >
-              {/* {clonedIcon} */}
-              <span>
-                {multipleSelect
-                  ? totalSelected > 0
-                    ? `${totalSelected} Dipilih`
-                    : "All"
-                  : selected || "All"}
-              </span>
-              {totalSelected === 0 && <ChevronDown className="h-3 w-3" />}
-            </Button>
-          </PopoverTrigger>
-
-          {totalSelected > 0 && (
-            <Button
-              className="absolute top-1.5 right-2 z-10"
-              variant="outline2"
-              size="xxs"
-              onClick={handleClear}
-            >
-              <XMarkIcon className="h-2 w-2" />
-            </Button>
-          )}
-        </div>
+            <div className={cn(
+                    "relative rounded-md bg-white shadow-sm",
+                    !selected || totalSelected === 0 ? "border border-gray-200" : "border border-sky-400"
+                  )}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="xs" className="flex items-center gap-2 rounded-md font-semibold w-full">
+                      <span className="text-xs">
+                        {multipleSelect
+                          ? totalSelected > 0
+                            ? `${totalSelected} Dipilih`
+                            : "All"
+                          : selected || "All"}
+                      </span>
+                        <ChevronDown className="h-2 w-2" />
+                      </Button>
+                    </PopoverTrigger>
+            
+                    {totalSelected > 0 && (
+                      <Button
+                        className="absolute top-1.5 right-2 z-10"
+                        variant="outline2"
+                        size="xxs"
+                        onClick={handleClear}
+                      >
+                        <XMarkIcon className="h-2 w-2" />
+                      </Button>
+                    )}
+                  </div>
 
         <PopoverContent
           align="start"
-          className="bg-white p-2 rounded-md shadow-lg border w-52"
+          className="bg-white p-2 rounded-md shadow-lg border w-auto"
           sideOffset={8}
         >
           {multipleSelect ? (
