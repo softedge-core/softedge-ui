@@ -4,6 +4,12 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "author": "Gelar Wirabuana <gelar.w@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/softedge-core/softedge-ui.git"
+  },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs"
   },
@@ -39,5 +45,7 @@
     "tailwindcss": "^3.4.17",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
-  }
+  },
+  "keywords": ["react", "component", "shadcn", "ui"],
+  "files": ["dist"]
 }
