@@ -21,6 +21,7 @@ import { SortableRow } from './components/TableContent'
 import { TableGroupHeader } from './components/TableGroupHeader'
 import { TableGroupedHeader } from './components/TableGroupContent'
 import { DragOverlayRow } from './components/DragOverlayRow'
+import { cn } from '../../lib/utils'
 
 type Column = {
   key: string
@@ -57,13 +58,16 @@ type Props = {
   filterKeys?: Record<string, FilterConfig>
   groupByKey?: GroupBy[]
   pageSize?: number
-  height?: number
+  height: string
   backgroundColor?: string
   highlightColor?: string
   searchParams?: URLSearchParams
   setSearchParams?: (params: URLSearchParams) => void
   renderRowActions?: (row: any) => React.ReactNode
   addNewButton?: () => void
+  addNewButtonTitle?: string
+  view?: "grid" | "column" | undefined;
+  renderColumnView?: (data: any[]) => React.ReactNode;
 }
 
 function SortableItem({ id, children }: { id: string; children: (props: { listeners: any }) => React.ReactNode }) {
@@ -100,12 +104,16 @@ export function SoftEdgeTable({
   filterKeys = {}, 
   groupByKey = [], 
   pageSize = 5, 
-  height,backgroundColor, 
+  height,
+  backgroundColor, 
   highlightColor,
   searchParams, 
   setSearchParams, 
   renderRowActions,
-  addNewButton
+  addNewButton,
+  addNewButtonTitle,
+  view,
+  renderColumnView
  }: Props) {
   const [data, setData] = useState<any[]>(initialData)
   const [loading, setLoading] = useState(false);
@@ -122,25 +130,34 @@ export function SoftEdgeTable({
   const [selectedGroupBy, setSelectedGroupBy] = useState('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction?: 'asc' | 'desc' }>({ key: '', direction: undefined });
+  const [sortConfig, setSortConfig] = useState<{
+    key?: string;
+    direction?: 'asc' | 'desc';
+  }>({ key: undefined, direction: undefined });
+  const [viewMode, setViewMode] = useState<"grid" | "column" | undefined>(view)
+  const handleViewChange = (mode: "grid" | "column" | undefined) => {
+    setViewMode(mode)
+  }
   
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      if (service !== undefined) {
-        const result = await service();
-        setData(result);
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    let mounted = true;
+
+    const load = async () => {
+      if (!service) return;
+      setLoading(true);
+      const result = await service();
+      if (mounted) {
+        setData(result);
+        setLoading(false);
+      }
+    };
+
+    load();
+
+    return () => {
+      mounted = false;
+    };
+  }, [service]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -171,7 +188,6 @@ export function SoftEdgeTable({
       [field]: value ?? '',
     }))
   }
-  
   
   function handleDragStart(event: any) {
     setActiveId(event.active.id)
@@ -254,27 +270,39 @@ export function SoftEdgeTable({
 
   
   const filteredSortedData = useMemo(() => {
-    if (!sortConfig.key || !sortConfig.direction) return filteredData;
-  
-    return [...filteredData].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-  
-      if (aValue === undefined || bValue === undefined) return 0;
-      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredData, sortConfig]);
+  if (!Array.isArray(filteredData)) return [];
+
+  if (!sortConfig?.key || !sortConfig?.direction) return [...filteredData];
+
+  return [...filteredData].sort((a, b) => {
+    const aValue = sortConfig.key ? a?.[sortConfig.key] : undefined;
+    const bValue = sortConfig.key ? b?.[sortConfig.key] : undefined;
+
+    // Handle null/undefined/NaN
+    if (aValue == null && bValue == null) return 0;
+    if (aValue == null) return 1;
+    if (bValue == null) return -1;
+
+    if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+
+    return 0;
+  });
+}, [filteredData, sortConfig]);
 
 
   const totalItems = filteredSortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
 
   const paginatedData = useMemo(() => {
+    if (!Array.isArray(filteredSortedData)) return [];
+    if (typeof currentPage !== "number" || currentPage < 1) return [];
+  
     const start = (currentPage - 1) * pageSize;
-    return filteredSortedData.slice(start, start + pageSize);
-  }, [filteredSortedData, currentPage]);
+    const end = start + pageSize;
+  
+    return filteredSortedData.slice(start, end);
+  }, [filteredSortedData, currentPage, pageSize]);
 
   const grouped = groupBy(paginatedData, selectedGroupBy);
 
@@ -313,75 +341,90 @@ export function SoftEdgeTable({
         searchParams={searchParams}
         setSearchParams={setSearchParams}
         addNewButton={addNewButton}
+        addNewButtonTitle={addNewButtonTitle}
+        viewMode={viewMode}
+        onViewChange={handleViewChange}
       />
-      <div className="overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-white relative" style={height !== undefined ? { height: `calc(100vh - ${height}px)` } : undefined}>
-        <DndContext sensors={sensors}  collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <table className="table-auto w-full border-separate border-spacing-0">
-            {selectedGroupBy === null || selectedGroupBy === '' || selectedGroupBy === undefined ? (
-              <>
-              <TableHeader columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} 
-                  backgroundColor={backgroundColor} handleSort={handleSort}
-                  sortConfig={{
-                    key: sortConfig.key,
-                    direction: sortConfig.direction || 'asc',
-                  }}
-                  renderRowActions={renderRowActions}
-                />
-                <SortableContext items={paginatedData.map((row) => row.id)}>
-                  <tbody>
-                  { loading ? (
-                      <TableSkeleton columns={columns.length + 2} rows={5} />
-                  ) :
-                    paginatedData.map((row) => (
-                      <SortableItem key={row.id} id={row.id}>
-                        {({ listeners }) => (
-                          <SortableRow row={row} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} 
-                            backgroundColor={backgroundColor} highlightColor={highlightColor}
-                            listeners={listeners}
-                            renderRowActions={renderRowActions} />
-                        )}
-                      </SortableItem>
-                    )
-                  )}
-                  </tbody>
-                </SortableContext>
-              </>
-            ) : (
-              <tbody>
-                {Object.entries(grouped).map(([groupName, items]) => (
-                   <React.Fragment key={groupName}>
-                      <TableGroupHeader groupName={groupName} expanded={expandedGroups[groupName]} onToggle={toggleGroup} colSpan={columns.length + 2} />
-                      {expandedGroups[groupName] && (
-                        <TableGroupedHeader columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} backgroundColor={backgroundColor} handleSort={handleSort}
-                          sortConfig={{ key: sortConfig.key, direction: sortConfig.direction || 'asc' }} />
-                      )}
-
-                      {expandedGroups[groupName] &&
-                        (items as typeof data).map((row) => (
+       <div>
+        {viewMode === undefined || viewMode === "grid" ? (
+          <div className={cn('overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-white relative',
+            height)}>
+            <DndContext sensors={sensors}  collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <table className="table-auto w-full border-separate border-spacing-0">
+                {selectedGroupBy === null || selectedGroupBy === '' || selectedGroupBy === undefined ? (
+                  <>
+                  <TableHeader columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} 
+                      backgroundColor={backgroundColor} handleSort={handleSort}
+                      sortConfig={{
+                        key: sortConfig.key || '',
+                        direction: sortConfig.direction || 'asc',
+                      }}
+                      renderRowActions={renderRowActions}
+                    />
+                    <SortableContext items={paginatedData.map((row) => row.id)}>
+                      <tbody>
+                      { loading ? (
+                          <TableSkeleton columns={columns.length + 2} rows={5} />
+                      ) :
+                        paginatedData.map((row) => (
                           <SortableItem key={row.id} id={row.id}>
                             {({ listeners }) => (
-                              <SortableRow
-                                row={row} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} backgroundColor={backgroundColor}
-                                highlightColor={highlightColor} listeners={listeners} renderRowActions={renderRowActions}
-                              />
+                              <SortableRow row={row} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} 
+                                backgroundColor={backgroundColor} highlightColor={highlightColor}
+                                listeners={listeners}
+                                renderRowActions={renderRowActions} />
                             )}
-                            </SortableItem>
-                      ))}
-                   </React.Fragment>
-                ))}
-              </tbody>
-            )}
-          </table>
-          <DragOverlay>
-            <DragOverlayRow activeRow={activeRow} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} />
-          </DragOverlay>
-        </DndContext>
-        <CFDinamicDnDTablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
+                          </SortableItem>
+                        )
+                      )}
+                      </tbody>
+                    </SortableContext>
+                  </>
+                ) : (
+                  <tbody>
+                    {Object.entries(grouped).map(([groupName, items]) => (
+                       <React.Fragment key={groupName}>
+                          <TableGroupHeader groupName={groupName} expanded={expandedGroups[groupName]} onToggle={toggleGroup} colSpan={columns.length + 2} />
+                          {expandedGroups[groupName] && (
+                            <TableGroupedHeader columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} backgroundColor={backgroundColor} handleSort={handleSort}
+                              sortConfig={{ key: sortConfig.key || '', direction: sortConfig.direction || 'asc' }} />
+                          )}
+    
+                          {expandedGroups[groupName] &&
+                            (items as typeof data).map((row) => (
+                              <SortableItem key={row.id} id={row.id}>
+                                {({ listeners }) => (
+                                  <SortableRow
+                                    row={row} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} backgroundColor={backgroundColor}
+                                    highlightColor={highlightColor} listeners={listeners} renderRowActions={renderRowActions}
+                                  />
+                                )}
+                                </SortableItem>
+                          ))}
+                       </React.Fragment>
+                    ))}
+                  </tbody>
+                )}
+              </table>
+              <DragOverlay>
+                <DragOverlayRow activeRow={activeRow} columns={columns} visibleColumns={visibleColumns} defaultColumn={defaultColumn} />
+              </DragOverlay>
+            </DndContext>
+            <CFDinamicDnDTablePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
+        ) : (
+          renderColumnView ? (
+            renderColumnView(filteredSortedData)
+          ) : (
+            <p className="text-sm text-gray-500 italic">No column view renderer provided.</p>
+          )
+        )}
       </div>
+      
     </div>
   )
 }
