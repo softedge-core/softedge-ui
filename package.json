@@ -1,5 +1,5 @@
 {
-  "name": "@softedge-core/softedge-ui",
+  "name": "softedge-ui",
   "version": "1.0.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -11,15 +11,15 @@
     "url": "https://github.com/softedge-core/softedge-ui.git"
   },
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs"
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "release:patch": "npm version patch && npm run build && npm publish --access public",
+    "release:minor": "npm version minor && npm run build && npm publish --access public",
+    "release:major": "npm version major && npm run build && npm publish --access public"
   },
   "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
-  //"publishConfig": {
-  //  "registry": "https://npm.pkg.github.com"
-  //},
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
@@ -46,6 +46,13 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
-  "keywords": ["react", "component", "shadcn", "ui"],
-  "files": ["dist"]
+  "keywords": [
+    "react",
+    "component",
+    "shadcn",
+    "ui"
+  ],
+  "files": [
+    "dist"
+  ]
 }
