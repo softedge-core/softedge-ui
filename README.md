@@ -1,5 +1,3 @@
-# Softedge-UI
-
 ![npm](https://img.shields.io/npm/v/softedge-ui)
 ![Downloads](https://img.shields.io/npm/dw/softedge-ui)
 
@@ -25,7 +23,7 @@ Built to power internal tools, admin dashboards, and multi-tenant platforms with
 
 ```bash
 npm install softedge-ui
-
+```
 ## 🧱 Features
 
 - Fully customizable with Tailwind CSS  
@@ -56,6 +54,7 @@ git clone https://github.com/softedge-core/softedge-ui.git
 cd softedge-ui
 npm install
 npm run dev
+```
 
 ## 📃 License
 
