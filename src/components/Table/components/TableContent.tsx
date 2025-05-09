@@ -61,9 +61,7 @@ export function SortableRow({
             ? col.render(row)
             : row[col.key]
           }
-            {/* {Array.isArray(row[col.key as keyof typeof row])
-              ? (row[col.key as keyof typeof row] as number[]).join(', ')
-              : String(row[col.key as keyof typeof row] ?? '')} */}
+          
           </td>
         ) : null
       )}

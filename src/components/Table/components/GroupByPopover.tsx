@@ -21,7 +21,7 @@ export function GroupByPopover({ options, value, onChange }: GroupByPopoverProps
   const [open, setOpen] = useState(false);
 
   const handleClear = () => {
-    onChange?.(null);
+    onChange?.('');
     setOpen(false);
   };
 
