@@ -1,7 +1,5 @@
-import React from "react"
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group"
-import { Grid2X2, LayoutGrid, LayoutList, Sheet } from "lucide-react"
-import { cn } from "../lib/utils"
+import { LayoutGrid, Sheet } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip"
 
 export function ViewToggleWithIcons({

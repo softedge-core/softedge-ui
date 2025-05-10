@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Label } from "../../../ui/label";
+import { Label } from "@/ui/label";
 import { SearchInput } from "./SearchInput"; // atau ganti sesuai path SearchInput-mu
 import { GroupByPopover } from "./GroupByPopover";
 import { DisplayPopover } from "./DisplayPopover";
 import { CFPopoverFilter } from "./SEPopoverFilter";
 import { Home, HomeIcon, PlusCircle } from "lucide-react";
 import { AddNewButton } from "./AddNewButton";
-import { ViewToggleWithIcons } from "../../../ui/switchToggle";
+import { ViewToggleWithIcons } from "@/ui/switchToggle";
 
 interface TableToolbarProps {
   searchTerm: string;

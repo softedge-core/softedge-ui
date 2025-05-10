@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { Button } from "../../../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../ui/popover";
+import { Button } from "@/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 
 type GroupByType = {
   key: string;

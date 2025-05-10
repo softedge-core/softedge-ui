@@ -1,7 +1,7 @@
 import React from "react";
 import { GripVertical, MoreHorizontal } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../../../ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/ui/dropdown-menu";
 
 interface SortableRowProps {
   row: any;

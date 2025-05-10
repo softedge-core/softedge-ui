@@ -1,8 +1,8 @@
 import { Check, Search } from "lucide-react";
 import IconX from "../icons/IconX";
 import React, { useState } from "react";
-import { ScrollArea } from "../../../ui/scroll-area";
-import { Input } from "../../../ui/input";
+import { ScrollArea } from "@/ui/scroll-area";
+import { Input } from "@/ui/input";
 
 interface MultiOptionListProps {
   label: string;

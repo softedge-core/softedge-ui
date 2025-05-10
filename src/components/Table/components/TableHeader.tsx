@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 import { GripVertical } from "lucide-react";
 import { ChevronSolidUp } from "../icons/ChevronUp";
 import { ChevronSolidDown } from "../icons/ChevronDown";
