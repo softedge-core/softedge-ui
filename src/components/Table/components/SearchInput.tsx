@@ -21,7 +21,7 @@ export function SearchInput({ searchTerm, setSearchTerm }: { searchTerm: string,
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Cari..."
+        placeholder="Search..."
         className="h-7 pl-8 pr-8 text-sm font-thin bg-white focus:ring-0 focus:ring-transparent"
       />
     </div>
