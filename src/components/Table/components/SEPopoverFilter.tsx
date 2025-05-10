@@ -1,13 +1,13 @@
 import React, { useState, isValidElement, cloneElement } from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "../../../ui/popover";
-import { Button } from "../../../ui/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@/ui/popover";
+import { Button } from "@/ui/button";
 import { ChevronDown } from "lucide-react";
-import { Label } from "../../../ui/label";
+import { Label } from "@/ui/label";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { MultiOptionList } from "./SEPopoverMultipleOption";
 import { SingleOptionList } from "./SEPopoverSingleOption";
-import { cn } from "../../../lib/utils";
-import { ScrollArea } from "../../../ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/ui/scroll-area";
 
 type CFPopoverFilterProps = {
   icon: React.ReactNode;

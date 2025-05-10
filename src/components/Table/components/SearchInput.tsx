@@ -1,7 +1,7 @@
 import React from "react";
 import { Search } from "lucide-react";
 import IconX from "../icons/IconX";
-import { Input } from "../../../ui/input";
+import { Input } from "@/ui/input";
 
 export function SearchInput({ searchTerm, setSearchTerm }: { searchTerm: string, setSearchTerm: (val: string) => void }) {
     return (

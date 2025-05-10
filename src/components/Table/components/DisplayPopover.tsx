@@ -1,8 +1,8 @@
 import React from "react";
 import { GripVertical, SlidersHorizontalIcon } from "lucide-react"
-import { Button } from "../../../ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "../../../ui/popover"
-import { Switch } from "../../../ui/switch"
+import { Button } from "@/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover"
+import { Switch } from "@/ui/switch"
 
 // Define or import ColumnType
 type ColumnType = {

@@ -1,6 +1,6 @@
 {
   "name": "softedge-ui",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,14 +11,26 @@
     "url": "https://github.com/softedge-core/softedge-ui.git"
   },
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "build": "tsup src/index.ts build:css --dts --format esm,cjs",
+    "abuild": "tsc && npm run build:css",
     "release:patch": "npm version patch && npm run build && npm publish --access public",
     "release:minor": "npm version minor && npm run build && npm publish --access public",
-    "release:major": "npm version major && npm run build && npm publish --access public"
+    "release:major": "npm version major && npm run build && npm publish --access public",
+    "build:css": "tailwindcss -i ./src/styles/globals.css -o ./dist/softedge-ui.css --minify"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style": "./dist/softedge-ui.css"
   },
   "peerDependencies": {
+    "clsx": "^1.2.1",
+    "lucide-react": "^0.503.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.17"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
