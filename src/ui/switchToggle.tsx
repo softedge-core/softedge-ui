@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group"
 import { LayoutGrid, Sheet } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip"
 
 export function ViewToggleWithIcons({
   value,
@@ -18,6 +18,7 @@ export function ViewToggleWithIcons({
       }}
       className="flex flex-row -space-x-2 space gap-2 bg-white rounded-md border border-gray-200 shadow-sm"
     >
+      <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <ToggleGroupItem
@@ -30,6 +31,8 @@ export function ViewToggleWithIcons({
         </TooltipTrigger>
         <TooltipContent side="top" className="bg-slate-900 text-white p-2">Table view</TooltipContent> 
       </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
             <ToggleGroupItem
@@ -42,6 +45,7 @@ export function ViewToggleWithIcons({
         </TooltipTrigger>
         <TooltipContent side="top" className="bg-slate-900 text-white p-2">Column view</TooltipContent> 
       </Tooltip>
+      </TooltipProvider>
     </ToggleGroup>
   )
 }
