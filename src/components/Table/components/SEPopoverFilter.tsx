@@ -85,7 +85,7 @@ export const CFPopoverFilter = ({
                       <span className="text-xs">
                         {multipleSelect
                           ? totalSelected > 0
-                            ? `${totalSelected} Dipilih`
+                            ? `${totalSelected} Selected`
                             : "All"
                           : selected || "All"}
                       </span>
