@@ -86,7 +86,7 @@ export const MultiOptionList = ({
             {/* Selected Items */}
             {value.length > 0 && (
               <>
-                <div className="text-xs font-semibold text-slate-500 px-2">Terpilih</div>
+                <div className="text-xs font-semibold text-slate-500 px-2">Selected</div>
                 {value.map((selectedItem) => (
                   <div
                     key={selectedItem}
@@ -108,7 +108,7 @@ export const MultiOptionList = ({
               }`}
               onClick={handleClearAll}
             >
-              <span className="text-xs">Semua {label}</span>
+              <span className="text-xs">All {label}</span>
               {value.length === 0 && <Check className="w-4 h-4 text-blue-700" />}
             </div>
             <hr />
