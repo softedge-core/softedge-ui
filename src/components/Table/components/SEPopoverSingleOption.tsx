@@ -25,7 +25,7 @@ export const SingleOptionList = ({
   return (
     <div>
       <div className="flex w-full items-start justify-between pb-2">
-        <div className="text-xs text-slate-400">Filter berdasarkan {label}</div>
+        <div className="text-xs text-slate-400">Filter by {label}</div>
         <button
           type="button"
           onClick={() => setOpen(false)}
