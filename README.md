@@ -33,7 +33,7 @@ npm install softedge-ui
 - Extendable architecture for charts, documents, and other UI patterns  
 
 ## 📚 Documentation
-Visit the full documentation at:
+Visit the full documentation at: [Softedge-UI Documentation](https://softedge-core.github.io/softedge-ui-docs/)
 
 ## 📌 Roadmap
 
