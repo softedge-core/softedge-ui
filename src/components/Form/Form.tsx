@@ -4,36 +4,7 @@ import { Separator } from "@/ui/separator";
 import { Button } from "@/ui/button";
 import { useForm } from "react-hook-form";
 import { FieldRenderer } from "./components/FieldRenderer";
-
-export type FieldType = "text" | "textarea" | "select" | "checkbox" | "switch" | "date" | "daterange";
-
-export interface SelectOption {
-  label: string;
-  value: string;
-}
-
-export interface FieldConfig {
-  field: string;
-  label: string;
-  type: FieldType;
-  validation?: boolean;
-  options?: SelectOption[];
-  multipleOption?: Boolean;
-  dependsOn?: string;
-  width?: string;
-}
-
-export type FormComponent =
-  | { type: "alert"; alert: { type: "info" | "success" | "warning" | "error"; message: string } }
-  | { type: "notice"; notice: { type: string; message: string } }
-  | { type: "divider" }
-  | { type: "fields"; inline?: boolean; fields: FieldConfig[] }
-  | { type: "text"; render: () => React.ReactNode };
-
-export interface FormSection {
-  layout: "stacked" | "inline";
-  components: FormComponent[];
-}
+import { FormComponent, FormSection } from "./common";
 
 export interface SoftEdgeFormProps {
   schema: FormSection[];

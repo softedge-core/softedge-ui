@@ -1,15 +1,12 @@
-// components/Form/FieldRenderer.tsx
 import React, { useState } from "react";
 import { Input } from "@/ui/input";
 import { Textarea } from "@/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
-import { Checkbox } from "@/ui/checkbox";
 import { Switch } from "@/ui/switch";
-import { FieldError, UseFormRegister, UseFormWatch, UseFormSetValue } from "react-hook-form";
-import type { FieldConfig } from "@/components/Form";
-import { format } from "date-fns";
-import { SESingleSelect } from "@/ui/SESingleSelect";
+import { UseFormRegister, UseFormWatch, UseFormSetValue } from "react-hook-form";
 import { SingleOptionList } from "@/ui/SEPopoverSingle";
+import { FieldConfig } from "../common";
+import { RadioCard } from "./RadioCard";
+import { CheckboxPillGroup } from "./Checkbox";
 
 interface FieldRendererProps {
     field: FieldConfig & { defaultValue?: any };
@@ -37,9 +34,8 @@ interface FieldRendererProps {
     const isDisabled = field.dependsOn ? !watch(field.dependsOn) : false;
     const isMultiple = field.multipleOption ? field.multipleOption : false;
     const value = watch(field.field) ?? field.defaultValue;
-    //const widthClass = field.width !== "" || field.width !== undefined ? `w-[${field.width}]` : "w-full";
     const customWidth = field.width ? field.width : "100%";
-
+    
     const renderStacked = (control: React.ReactNode) => (
       <div
         key={field.field}
@@ -108,45 +104,32 @@ interface FieldRendererProps {
                   </div>
                 )}
               </>
-                    // <SESingleSelect options={(field.options ?? []).map(opt => ({ value: opt.value, label: opt.label }))} value={defaultValues[field.field] ?? field.defaultValue} onChange={(val) => setValue(field.field, val)}  disable={isDisabled}/>
-                //     <Select
-                //     disabled={isDisabled}
-                //     defaultValue={defaultValues[field.field] ?? field.defaultValue}
-                //     onValueChange={(val) => setValue(field.field, val)}
-                //   >
-                //     <SelectTrigger className="w-auto max-w-sm">
-                //       <SelectValue placeholder={`Pilih ${field.label}`} />
-                //     </SelectTrigger>
-                //     <SelectContent className="bg-white">
-                //       {field.options?.map((opt) => (
-                //         <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                //       ))}
-                //     </SelectContent>
-                //   </Select> 
                 )}
             </>
           );
-        case "checkbox":
+        case "checkbox": {
+          const current: string[] = Array.isArray(watch(field.field)) ? watch(field.field) : [];
+
           return (
             <div className="flex flex-col gap-2">
-              {field.options?.map((opt) => (
-                <label key={opt.value} className="flex items-center gap-2">
-                  <Checkbox
-                    checked={Array.isArray(value) ? value.includes(opt.value) : false}
-                    onCheckedChange={(checked) => {
-                      const newValue = Array.isArray(value) ? [...value] : [];
-                      if (checked) {
-                        setValue(field.field, [...newValue, opt.value]);
-                      } else {
-                        setValue(field.field, newValue.filter((v) => v !== opt.value));
-                      }
-                    }}
-                  />
-                  <span>{opt.label}</span>
-                </label>
-              ))}
+              <input type="hidden" {...register(field.field)} value={current.join(",")} readOnly />
+
+              <CheckboxPillGroup
+                value={current}
+                options={field.options ?? []}
+                onChange={(newVal) =>
+                  setValue(field.field, newVal, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                  })
+                }
+                disabled={isDisabled}
+                color="cyan"
+              />
             </div>
           );
+        }
         case "switch":
           return (
             <div className="flex items-center gap-3">
@@ -189,6 +172,23 @@ interface FieldRendererProps {
               />
             </div>
           );
+
+          case "radio":
+            return (
+              <div className="flex flex-col gap-2">
+                {field.options?.map((opt) => (
+                  <RadioCard
+                    key={opt.value}
+                    value={opt.value}
+                    label={opt.label}
+                    description={opt.description}
+                    icon={opt.icon}
+                    selected={value === opt.value}
+                    onChange={() => setValue(field.field, opt.value)}
+                  />
+                ))}
+              </div>
+            );
         default:
           return <Input type="text" disabled={isDisabled} defaultValue={field.defaultValue} {...register(field.field, rules)} />;
       }

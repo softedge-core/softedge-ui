@@ -1,63 +1,72 @@
 import { ReactNode, useState } from "react";
+import { FormComponent } from "../Form/common";
 import { WizardForm } from "./WizardForm";
 
-export interface Field {
-  field: string;
-  label: string;
-  type: "text" | "select";
-  validation?: boolean;
-  options?: { label: string; value: string }[];
-};
+// export type FieldType = "text" | "textarea" | "select" | "checkbox" | "switch" | "date" | "daterange";
 
-export type FormComponentWizard =
-  | { type: "fields"; fields: Field[] }
-  | { type: "text"; render: () => React.ReactNode };
+// export interface SelectOption {
+//   label: string;
+//   value: string;
+// }
+
+// export interface FieldConfig {
+//     field: string;
+//     label: string;
+//     type: FieldType;
+//     validation?: boolean;
+//     options?: SelectOption[];
+//     multipleOption?: Boolean;
+//     dependsOn?: string;
+//     width?: string;
+// };
+// export type FormComponent =
+//   | { type: "alert"; alert: { type: "info" | "success" | "warning" | "error"; message: string } }
+//   | { type: "notice"; notice: { type: string; message: string } }
+//   | { type: "divider" }
+//   | { type: "fields"; inline?: boolean; fields: FieldConfig[] }
+//   | { type: "text"; render: () => React.ReactNode };
 
 
 export interface StepConfig {
   layout: "stacked" | "inline";
-  components: FormComponentWizard[];
-
-  title?: string;
+  components: FormComponent[];
+  titleContent?: ReactNode;
   rightContent?: ReactNode;
 };
 
 interface WizardFormLayoutProps {
   steps: StepConfig[];
+  closeButton?: () => void;
 }
 
-export function FormWizard({ steps }: WizardFormLayoutProps) {
+export function FormWizard({ steps, closeButton }: WizardFormLayoutProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const currentStep = steps[stepIndex];
-  const { title, rightContent } = currentStep;
+  const { titleContent, rightContent } = currentStep;
 
-  const hasTitle = Boolean(title);
+  const hasTitle = Boolean(titleContent);
   const hasRight = Boolean(rightContent);
-  const fullWidth = !hasTitle && !hasRight;
 
   return (
-  <div className={fullWidth ? "w-full" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
-    {/* Left: Title + Scrollable Form */}
-    <div className="flex flex-col min-h-screen relative">
-      {/* Sticky Title */}
-      {hasTitle && (
-        <div className="sticky top-0 z-10 bg-white border-b px-4 py-3">
-          <h2 className="text-xl font-semibold">{title}</h2>
+    <div className={`grid ${hasRight ? "grid-cols-2" : "grid-cols-1"} gap-6 w-full h-screen`}>
+      
+      <div className="flex flex-col h-screen w-full">
+        {hasTitle && titleContent}        
+        <div className="flex-1 overflow-y-auto pt-4 px-4 pb-32">
+          <WizardForm
+            steps={steps}
+            stepIndex={stepIndex}
+            setStepIndex={setStepIndex}
+            closeButton={closeButton}
+          />
+        </div>
+      </div>
+
+      {hasRight && (
+        <div className="sticky top-0 h-screen border-l overflow-y-auto p-6 bg-gray-50">
+          {rightContent}
         </div>
       )}
-
-      {/* Scrollable form area */}
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-        <WizardForm steps={steps} stepIndex={stepIndex} setStepIndex={setStepIndex} />
-      </div>
     </div>
-
-    {/* Right Panel: Sticky on full screen height */}
-    {hasRight && (
-      <div className="sticky top-0 h-screen overflow-y-auto border-l p-6 bg-blue-100">
-        {rightContent}
-      </div>
-    )}
-  </div>
 );
 }
